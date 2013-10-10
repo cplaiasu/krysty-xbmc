@@ -1,0 +1,18 @@
+0.0.6
+-> movies category implemented
+-> movies listed with thumbnail support
+-> search function improved
+-> search results listed with thumbnail support
+
+0.0.5
+-> bug fix: empty episodes list for some TV Shows
+
+0.0.4
+-> search function implemented
+
+0.0.3
+-> TV Shows sorted alphabetically
+
+0.0.2
+-> added thumbnails for TV Shows
+-> parsing video links optimized
