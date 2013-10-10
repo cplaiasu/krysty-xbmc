@@ -17,4 +17,17 @@
         <description>Stream and download scene releases from the links listed on www.990.ro</description>
     </extension>
 </addon>
+
+<addon id="repository.googlecode.krysty-xbmc" name="krysty-xbmc addons" version="1.0.0" provider-name="krysty">
+	<extension point="xbmc.addon.repository" name="anarchintosh add-on repository">
+		<info compressed="false">https://krysty-xbmc.googlecode.com/svn/addons/addons.xml</info>
+		<checksum>https://krysty-xbmc.googlecode.com/svn/addons/addons.xml.md5</checksum>
+		<datadir zip="true">https://krysty-xbmc.googlecode.com/svn/addons</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install Addons from http://krysty-xbmc.googlecode.com</summary>
+		<description>Download and install addons from krysty-xbmc repository.</description>
+		<platform>all</platform>
+	</extension>
+</addon>
 </addons>
