@@ -13,6 +13,6 @@
 		<provides>video</provides>
         <platform>all</platform>
         <summary>Stream videos from www.990.ro</summary>
-        <description>Stream and download scene releases from the links listed on www.990.ro</description>
+        <description>Stream and download scene releases from the links listed on [COLOR blue]www.990.ro[/COLOR]</description>
     </extension>
 </addon>
