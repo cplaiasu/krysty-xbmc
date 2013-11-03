@@ -1,3 +1,6 @@
+0.0.7
+-> bug fix: startup error on Android
+
 0.0.6
 -> movies category implemented
 -> movies listed with thumbnail support
