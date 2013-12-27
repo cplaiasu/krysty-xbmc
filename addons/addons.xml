@@ -18,25 +18,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.antena3"
-       name="Antena 3"
-       version="1.0.0"
-       provider-name="krysty">
-  <requires>
-   <import addon="xbmc.python" version="2.1"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Antena 3 RO live</summary>
-    <description>Urmareste Antena 3 RO live.</description>
-    <platform>all</platform>
-	<language>ro</language>
-  </extension>
-</addon>
-
-<addon id="repository.googlecode.krysty-xbmc" name="krysty-xbmc addons" version="1.0.0" provider-name="krysty">
+<addon id="repository.googlecode.krysty-xbmc" name="krysty-xbmc addons" version="1.0.1" provider-name="krysty">
 	<extension point="xbmc.addon.repository" name="anarchintosh add-on repository">
 		<info compressed="false">https://krysty-xbmc.googlecode.com/svn/addons/addons.xml</info>
 		<checksum>https://krysty-xbmc.googlecode.com/svn/addons/addons.xml.md5</checksum>
