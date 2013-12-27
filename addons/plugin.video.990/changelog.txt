@@ -1,5 +1,8 @@
+0.0.8
+-> error fixed: video links cannot be played
+
 0.0.7
--> bug fix: startup error on Android
+-> bug fix: startup error on Android devices
 
 0.0.6
 -> movies category implemented
