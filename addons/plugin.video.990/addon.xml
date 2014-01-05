@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.990"
        name="990.ro"
-       version="0.0.8"
+       version="0.0.9"
        provider-name="krysty">
     <requires>
         <import addon="xbmc.python" version="2.0"/>
@@ -13,6 +13,6 @@
 		<provides>video</provides>
         <platform>all</platform>
         <summary>Stream videos from www.990.ro</summary>
-        <description>Stream and download scene releases from the links listed on [COLOR blue]www.990.ro[/COLOR]</description>
+        <description>Stream scene releases from the links listed on [COLOR blue]www.990.ro[/COLOR]</description>
     </extension>
 </addon>
