@@ -1,3 +1,7 @@
+0.1.0
+-> searching video links improved
+-> added video quality info for movies
+
 0.0.9
 -> some minor improvements and bug fixes
 
