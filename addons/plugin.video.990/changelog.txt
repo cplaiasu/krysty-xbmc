@@ -1,3 +1,9 @@
+0.2.0
+-> major change: plugin completely revised to work with the new 990.ro platform
+-> added: menu to see latest videos uploaded
+-> added: movie trailers
+-> Note: use search to find cartoons
+
 0.1.0
 -> searching video links improved
 -> added video quality info for movies
