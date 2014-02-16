@@ -1,3 +1,6 @@
+0.2.1
+-> corrected a mistake
+
 0.2.0
 -> major change: plugin completely revised to work with the new 990.ro platform
 -> added: menu to see latest videos uploaded
