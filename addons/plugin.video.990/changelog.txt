@@ -1,8 +1,12 @@
+0.2.3
+-> some bug fixes
+-> implemented GA
+
 0.2.2
 -> some minor improvements and bug fixes
 
 0.2.1
--> corrected a mistake
+-> fixed some mistakes
 
 0.2.0
 -> major change: plugin completely revised to work with the new 990.ro platform
