@@ -1,5 +1,8 @@
+0.2.5
+->fixed error: video link not available for movies
+
 0.2.4
--> error fixed: can't play video if youtube trailer isn't available
+-> fixed error: can't play video if youtube trailer isn't available
 
 0.2.3
 -> some bug fixes
@@ -25,7 +28,7 @@
 -> some minor improvements and bug fixes
 
 0.0.8
--> error fixed: video links cannot be played
+-> fixed error: video links cannot be played
 
 0.0.7
 -> bug fix: startup error on Android devices
