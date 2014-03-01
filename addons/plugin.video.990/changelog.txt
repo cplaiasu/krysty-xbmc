@@ -1,5 +1,9 @@
+0.3.0
+-> implemented video bookmarks
+-> implemented video watched status
+
 0.2.5
-->fixed error: video link not available for movies
+-> fixed error: video link not available for movies
 
 0.2.4
 -> fixed error: can't play video if youtube trailer isn't available
