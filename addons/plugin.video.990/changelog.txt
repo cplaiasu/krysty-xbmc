@@ -1,3 +1,6 @@
+0.3.1
+-> added search history on last search (requested by my girlfriend)
+
 0.3.0
 -> implemented video bookmarks
 -> implemented video watched status
