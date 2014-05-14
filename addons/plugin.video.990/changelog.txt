@@ -1,3 +1,6 @@
+0.3.2
+-> should now support Gotham version
+
 0.3.1
 -> added search history on last search (requested by my girlfriend)
 
