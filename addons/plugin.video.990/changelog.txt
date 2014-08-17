@@ -1,3 +1,7 @@
+0.3.4
+-> fixed: empty list for last added movies
+-> some bug fixes
+
 0.3.3
 -> some bug fixes
 
