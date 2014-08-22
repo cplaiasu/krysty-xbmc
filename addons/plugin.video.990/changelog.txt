@@ -1,3 +1,9 @@
+0.4.0
+-> resolving video links improved
+-> added dialog box for selecting stream source
+-> other improvements and bug fixes
+-> code cleanup
+
 0.3.4
 -> fixed: empty list for last added movies
 -> some bug fixes
