@@ -1,3 +1,6 @@
+0.4.1
+-> solved: "Can't play movies when I select option Movies", problem reported by fanelaru
+
 0.4.0
 -> resolving video links improved
 -> added dialog box for selecting stream source
