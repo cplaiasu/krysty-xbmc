@@ -1,3 +1,10 @@
+0.4.3
+-> function for getting the list of movies was rewritten
+-> solved: movies list is displayed with duplicates
+-> solved: not display the entire list of movies
+-> other changes for compatibility with the new changes in the website
+-> some other various fixes
+
 0.4.2
 -> added support for unhardcoded subtitles
 -> some other various fixes
@@ -81,3 +88,6 @@
 0.0.2
 -> added thumbnails for TV Shows
 -> parsing video links optimized
+
+0.0.1
+-> initial version
