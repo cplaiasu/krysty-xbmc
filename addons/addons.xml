@@ -2,7 +2,7 @@
 <addons>
 <addon id="plugin.video.990"
        name="990.ro"
-       version="0.4.3"
+       version="0.4.4"
        provider-name="krysty">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

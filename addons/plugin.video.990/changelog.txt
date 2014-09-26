@@ -1,3 +1,7 @@
+0.4.4
+-> added movies list cache for faster load times (see settings)
+-> corrected some mistakes
+
 0.4.3
 -> function for getting the list of movies was rewritten
 -> solved: movies list is displayed with duplicates
