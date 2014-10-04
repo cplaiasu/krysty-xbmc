@@ -1,3 +1,8 @@
+0.4.5
+-> improved for reliability and speed
+-> got rid of list number
+-> code cleanup
+
 0.4.4
 -> added movies list cache for faster load times (see settings)
 -> corrected some mistakes
