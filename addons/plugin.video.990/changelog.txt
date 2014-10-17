@@ -1,3 +1,9 @@
+0.4.6
+-> added episodes list cache for tvshows
+-> added option to clear the cache
+-> removed watched status (new versions of XBMC has it built in)
+-> added play trailer feature on movie right click menu
+
 0.4.5
 -> improved for reliability and speed
 -> got rid of list number
