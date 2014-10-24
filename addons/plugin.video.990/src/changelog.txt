@@ -1,3 +1,7 @@
+0.4.8
+-> removed repository entry from addon.xml, this should solve
+   installation problem for other addons in the repository
+
 0.4.7
 -> some bug fixes
 

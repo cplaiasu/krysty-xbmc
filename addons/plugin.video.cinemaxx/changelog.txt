@@ -1,2 +1,6 @@
+1.0.1
+-> removed repository entry from addon.xml, this should solve
+   installation problem for other addons in the repository
+
 1.0.0
 -> initial version
