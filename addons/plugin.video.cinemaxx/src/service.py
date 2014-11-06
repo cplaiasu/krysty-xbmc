@@ -2,7 +2,7 @@ import os
 import xbmc, xbmcgui
 import re
 
-db_dir = os.path.join(xbmc.translatePath("special://database"), 'cinemaxxdotrocache.db')
+db_dir  = os.path.join(xbmc.translatePath("special://database"), 'cinemaxxdotrocache.db')
 tmp_dir = xbmc.translatePath("special://temp")
 
 try:
@@ -106,7 +106,7 @@ class Service(xbmc.Player):
 					raise RuntimeError('XBMC silently failed to start playback')
 				
 				elif (percent > 85) and self.video_type:
-					xbmc.log('cinemaxx.ro: Service: Threshold met. Marking item as watched')
+					xbmc.log('cinemaxx.ro: Service: Threshold met. Removing bookmark')
 					
 					sql = 'DELETE FROM bookmarks WHERE video_type=? AND title=?'
 					

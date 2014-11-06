@@ -1,3 +1,6 @@
+1.0.2
+-> fix for mail.ru video sources
+
 1.0.1
 -> removed repository entry from addon.xml, this should solve
    installation problem for other addons in the repository

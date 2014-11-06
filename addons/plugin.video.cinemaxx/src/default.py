@@ -1,5 +1,5 @@
 """
-    990.ro XBMC Addon
+    cinemaxx.ro XBMC Addon
     Copyright (C) 2012-2014 krysty
 	https://code.google.com/p/krysty-xbmc/
 
@@ -27,15 +27,15 @@ from resources.lib.ga import track
 
 
 siteUrl		= 'http://www.cinemaxx.ro/'
-searchUrl	= 'http://www.cinemaxx.ro/ajax_search.php'
-newMoviesUrl= 'http://www.cinemaxx.ro/newvideos.html'
+searchUrl		= 'http://www.cinemaxx.ro/ajax_search.php'
+newMoviesUrl	= 'http://www.cinemaxx.ro/newvideos.html'
 
 USER_AGENT 	= 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
 ACCEPT 		= 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
 
-MoviesIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'moviesicon.png')
-SearchIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'searchicon.png')
-SettingsIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'settingsicon.png')
+moviesIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'moviesIcon.png')
+searchIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'searchIcon.png')
+settingsIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'settingsIcon.png')
 
 print plugin.getPluginVersion()
 
@@ -45,10 +45,10 @@ track(plugin.getPluginVersion())
 
 
 def MAIN():
-	addDir('Categorii', siteUrl, 1, MoviesIcon)
-	addDir('Adaugate Recent', newMoviesUrl, 11, MoviesIcon)
-	addDir('Cautare', siteUrl, 2, SearchIcon)
-	addDir('Setari', siteUrl, 98, SettingsIcon)
+	addDir('Categorii', siteUrl, 1, moviesIcon)
+	addDir('Adaugate Recent', newMoviesUrl, 11, moviesIcon)
+	addDir('Cautare', siteUrl, 2, searchIcon)
+	addDir('Setari', siteUrl, 98, settingsIcon)
 	addDir('Golire Cache', siteUrl, 99)
 	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -173,7 +173,7 @@ def search():
 		data = urllib.urlencode(searchText)
 		req = urllib2.Request(searchUrl, data)
 		req.add_header('User-Agent', USER_AGENT)
-		req.add_header('Accept', ACCEPT)
+		req.add_header('ACCEPT', ACCEPT)
 		req.add_header('Referer', 'http://www.cinemaxx.ro/search.php?keywords=%s' % urllib.quote_plus(inputText))
 		response = urllib2.urlopen(req).read()
 		
@@ -198,7 +198,7 @@ def search():
 def http_req(url, getCookie=False):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', USER_AGENT)
-	req.add_header('Accept', ACCEPT)
+	req.add_header('ACCEPT', ACCEPT)
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()
@@ -269,9 +269,9 @@ def getSources(url):
 	except: pass
 
 	if srcMailRu:
-		for quality, link in srcMailRu[0].iteritems():
-			name = '%s %s' % ('[mail.ru]', quality.upper())
-			link = '%s|Cookie=%s' % (link, urllib.quote_plus(srcMailRu[1]))
+		for source in srcMailRu[0]:
+			name = '%s %s' % ('[mail.ru]', source['key'])
+			link = '%s|Cookie=%s' % (source['url'], urllib.quote_plus(srcMailRu[1]))
 			item = {'name': name, 'url': link}
 			sources.append(item)
 
