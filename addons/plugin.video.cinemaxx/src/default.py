@@ -27,14 +27,14 @@ from resources.lib.ga import track
 
 
 siteUrl		= 'http://www.cinemaxx.ro/'
-searchUrl		= 'http://www.cinemaxx.ro/ajax_search.php'
-newMoviesUrl	= 'http://www.cinemaxx.ro/newvideos.html'
+searchUrl	= 'http://www.cinemaxx.ro/ajax_search.php'
+newMoviesUrl= 'http://www.cinemaxx.ro/newvideos.html'
 
 USER_AGENT 	= 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
 ACCEPT 		= 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
 
-moviesIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'moviesIcon.png')
-searchIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'searchIcon.png')
+moviesIcon 	 = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'moviesIcon.png')
+searchIcon 	 = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'searchIcon.png')
 settingsIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'settingsIcon.png')
 
 print plugin.getPluginVersion()
@@ -173,7 +173,7 @@ def search():
 		data = urllib.urlencode(searchText)
 		req = urllib2.Request(searchUrl, data)
 		req.add_header('User-Agent', USER_AGENT)
-		req.add_header('ACCEPT', ACCEPT)
+		req.add_header('Accept', ACCEPT)
 		req.add_header('Referer', 'http://www.cinemaxx.ro/search.php?keywords=%s' % urllib.quote_plus(inputText))
 		response = urllib2.urlopen(req).read()
 		
@@ -198,7 +198,7 @@ def search():
 def http_req(url, getCookie=False):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', USER_AGENT)
-	req.add_header('ACCEPT', ACCEPT)
+	req.add_header('Accept', ACCEPT)
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()
@@ -250,41 +250,54 @@ def selectSource(url, title='', thumbnail=''):
 def getSources(url):
 	sources = []
 	
-	#formatare html pentru a obtine url-ul pentru playerul video, din cauza reclamelor javascript
-	html = BeautifulSoup(http_req(url)).find_all('script', {'type': 'text/javascript'})
+	rawhtml = http_req(url)
+	
+	html = BeautifulSoup(rawhtml).find_all('script', {'type': 'text/javascript'})
 	html = "".join(line.strip() for line in str(html).split("\n"))
 	html = re.findall(r'\$\.ajax\({.+?data: {(.+?)}', html)
 	html = html[1].replace('"', '').split(',')
+	
 	params = {}
+	
 	for parameter in html:
 		key, value = parameter.split(':')
 		params[key] = value.strip()
-	#in sfarsit url-ul pentru playerul video
-	url = '%sajax.php?p=video&do=getplayer&vid=%s' % (siteUrl, params['vid'])
 	
-	url = BeautifulSoup(http_req(url)).find('iframe').attrs['src']
+	mirrors = []
 	
-	srcMailRu = None
-	try: srcMailRu = resolveMailRu(url)
-	except: pass
-
-	if srcMailRu:
-		for source in srcMailRu[0]:
-			name = '%s %s' % ('[mail.ru]', source['key'])
-			link = '%s|Cookie=%s' % (source['url'], urllib.quote_plus(srcMailRu[1]))
-			item = {'name': name, 'url': link}
-			sources.append(item)
-
-	srcVk = None
-	try:
-		from resources.lib.getvk import getVkVideos
-		srcVk = getVkVideos(http_req(url))
-	except: pass
+	multiMirrors = re.findall(r'<img src=".+?templates/s[1-9].png"', rawhtml)
 	
-	if srcVk:
-		for vk in srcVk:
-			item = {'name': vk[0], 'url': vk[1]}
-			sources.append(item)
+	if(len(multiMirrors) != 0):
+		for i in range(len(multiMirrors)):
+			mirrors.append('%sajax.php?p=custom&do=requestmirror&vid=%s&mirror=%s' % (siteUrl, params['vid'], i+1))
+	else:
+		mirrors.append('%sajax.php?p=video&do=getplayer&vid=%s' % (siteUrl, params['vid']))
+	
+	mirrors.reverse()
+	
+	for mirror in mirrors:
+		try:
+			mirrorUrl = BeautifulSoup(http_req(mirror)).find('iframe').attrs['src']
+		except:
+			mirrorUrl = ''
+		
+		if(re.search(r'mail.ru', mirrorUrl)):
+			try:
+				srcMailRu = resolveMailRu(mirrorUrl)
+				for source in srcMailRu[0]:
+					name = '%s %s' % ('[mail.ru]', source['key'])
+					link = '%s|Cookie=%s' % (source['url'], urllib.quote_plus(srcMailRu[1]))
+					item = {'name': name, 'url': link}
+					sources.append(item)
+			except: pass
+		
+		elif(re.search(r'vk.com', mirrorUrl)):
+			try:
+				from resources.lib.getvk import getVkVideos
+				for source in getVkVideos(http_req(mirrorUrl)):
+					item = {'name': source[0], 'url': source[1]}
+					sources.append(item)
+			except: pass
 	
 	return sources
 
