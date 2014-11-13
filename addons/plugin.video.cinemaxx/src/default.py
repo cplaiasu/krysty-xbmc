@@ -251,17 +251,19 @@ def getSources(url):
 	sources = []
 	
 	rawhtml = http_req(url)
-	
-	html = BeautifulSoup(rawhtml).find_all('script', {'type': 'text/javascript'})
-	html = "".join(line.strip() for line in str(html).split("\n"))
-	html = re.findall(r'\$\.ajax\({.+?data: {(.+?)}', html)
-	html = html[1].replace('"', '').split(',')
-	
 	params = {}
 	
-	for parameter in html:
-		key, value = parameter.split(':')
-		params[key] = value.strip()
+	try:
+		params['vid'] = re.search(r'_([0-9a-z]+).html?', url).group(1)
+	except:
+		html = BeautifulSoup(rawhtml).find_all('script', {'type': 'text/javascript'})
+		html = "".join(line.strip() for line in str(html).split("\n"))
+		html = re.findall(r'\$\.ajax\({.+?data: {(.+?)}', html)
+		html = html[1].replace('"', '').split(',')
+	
+		for parameter in html:
+			key, value = parameter.split(':')
+			params[key] = value.strip()
 	
 	mirrors = []
 	
