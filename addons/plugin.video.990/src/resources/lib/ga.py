@@ -6,17 +6,16 @@ from hashlib import sha1
 try: from sys import getwindowsversion
 except: pass
 import xbmc, xbmcgui
+import uuid
 
 
 def track(plugin=''):
 	try:
 		PROPERTY_ID = "UA-46834994-1"
 		PATH = "/"
-		try:
-			ID = urlopen("http://myip.dnsdynamic.org/").read()
-		except:
-			import uuid
-			ID = str(uuid.getnode())
+		
+		ID = str(uuid.getnode())
+		
 		VISITOR = str(int("0x%s" % sha1(ID).hexdigest(), 0))[:10]
 		
 		DATA = {"utmwv": "5.2.2d",
@@ -54,12 +53,12 @@ def getPlatform(plugin):
 					version = getwindowsversion()
 					os_version %= (version[0], version[1])
 				platform = "XBMC %s (%s) %s" % (xbmc.getInfoLabel("System.BuildVersion").split(" ")[0], os_version, plugin)
-				platform = platform.strip()
+				paltform = platform.strip()
 		return platform
 	except:
 		platform = "XBMC %s" % plugin
-		platform = platform.strip()
-		return platform
+		platform = inf.strip()
+		return inf
 
 class window(xbmcgui.Window):
 	def getResolution(self):

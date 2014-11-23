@@ -6,17 +6,16 @@ from hashlib import sha1
 try: from sys import getwindowsversion
 except: pass
 import xbmc, xbmcgui
+import uuid
 
 
 def track(plugin=''):
 	try:
 		PROPERTY_ID = "UA-46834994-1"
 		PATH = "/"
-		try:
-			ID = urlopen("http://myip.dnsdynamic.org/").read()
-		except:
-			import uuid
-			ID = str(uuid.getnode())
+		
+		ID = str(uuid.getnode())
+		
 		VISITOR = str(int("0x%s" % sha1(ID).hexdigest(), 0))[:10]
 		
 		DATA = {"utmwv": "5.2.2d",

@@ -1,3 +1,6 @@
+1.0.5
+-> solved slowdowns
+
 1.0.4
 -> It seems that those who own the site,
    through minor changes, trying to block
