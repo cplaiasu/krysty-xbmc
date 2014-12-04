@@ -516,19 +516,19 @@ def getSources(url):
 	try:
 		quality = ''
 		if(re.search('filme', url)):
-			quality = re.findall(r'Calitate film: nota <b>(.+?)</b>', http_req(url))
+			quality = re.search(r'Calitate film: nota <b>(.+?)</b>', http_req(url))
 			movieId = re.search('-([\d]+)-', url)
 			url = siteUrl + 'player-film-' + movieId.group(1) + '-sfast.html'
 
-		match = re.findall(r'http://fastupload.?r?o?l?.ro/?v?i?d?e?o?/(.+?).html', http_req(url))
-		url = 'http://superweb.rol.ro/video/' + match[0] + '.html'
-		match = re.findall(r"'file': '(.+?)',", http_req(url))
-		videoLink = match[0] + '|referer=' + url
+		match = re.search(r'http://w?w?w?.?(?:fastupload|superweb).?r?o?l?.ro/?v?i?d?e?o?/(.+?).html?', http_req(url))
+		url = 'http://superweb.rol.ro/video/' + match.group(1) + '.html'
+		match = re.search(r"'file': '(.+?)',", http_req(url))
+		videoLink = match.group(1) + '|referer=' + url
 		
 		if(quality == ''):
 			item = {'name': 'Play Video', 'url': videoLink, 'subtitle': getSubtitle(url)}
 		else:
-			item = {'name': 'Play Video (Quality:'+quality[0]+')', 'url': videoLink, 'subtitle': getSubtitle(url)}
+			item = {'name': 'Play Video (Quality:'+quality.group(1)+')', 'url': videoLink, 'subtitle': getSubtitle(url)}
 		
 		sources.append(item)
 		

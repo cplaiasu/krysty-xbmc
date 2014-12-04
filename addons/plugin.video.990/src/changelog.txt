@@ -1,3 +1,7 @@
+0.4.10
+-> solved video links not available
+-> some other various changes
+
 0.4.9
 -> solved slowdowns
 

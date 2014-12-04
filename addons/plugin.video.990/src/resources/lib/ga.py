@@ -57,8 +57,8 @@ def getPlatform(plugin):
 		return platform
 	except:
 		platform = "XBMC %s" % plugin
-		platform = inf.strip()
-		return inf
+		platform = platform.strip()
+		return platform
 
 class window(xbmcgui.Window):
 	def getResolution(self):
