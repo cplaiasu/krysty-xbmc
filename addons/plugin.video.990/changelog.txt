@@ -1,5 +1,8 @@
+0.4.11
+-> solved: empty list for tvshows
+
 0.4.10
--> solved video links not available
+-> solved: video links not available
 -> some other various changes
 
 0.4.9

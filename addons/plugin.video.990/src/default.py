@@ -27,6 +27,7 @@ from resources.lib.ga import track
 
 siteUrl		= 'http://www.990.ro/'
 searchUrl	= 'http://www.990.ro/functions/search3/live_search_using_jquery_ajax/search.php'
+tvShowsUrl	= 'http://www.990.ro/seriale-lista.html'
 
 USER_AGENT 	= 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
 ACCEPT 		= 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
@@ -46,7 +47,7 @@ track(plugin.getPluginVersion())
 
 
 def MAIN():
-	addDir('TV Shows',siteUrl,4,TVshowsIcon)
+	addDir('TV Shows',tvShowsUrl,4,TVshowsIcon)
 	addDir('Movies',siteUrl,10,MoviesIcon)
 	addDir('Search',siteUrl,16,SearchIcon)
 	addDir('Settings',siteUrl,99,SettingsIcon)
@@ -62,7 +63,7 @@ def TVSHOWS(url):
 	addDir('All',url,1,TVshowsIcon)
 	addDir('Last Added',url,5,TVshowsIcon)
 	addDir('Search',url,15,TVshowsIcon)
-	addDir('1-9',url,17,TVshowsIcon)
+	addDir('[1-9]',url,17,TVshowsIcon)
 	for character in AZ:
 		addDir(character,url,17,TVshowsIcon)
 		
@@ -74,19 +75,21 @@ def getTVshows(url,order=None):
 	progress.create('Progress', 'Please wait...')
 	progress.update(1, "", "Loading list - 1%", "")
 	
-	div = htmlFilter(str(BeautifulSoup(http_req(url)).find("div", {"id": "sub1"})))
-	
-	if order: tvs = re.findall(r'href="seriale-(.+?)-online-download.html" title=".+?">(['+order+'].+?)</a>', div)
-	else:     tvs = re.findall(r'href="seriale-(.+?)-online-download.html" title=".+?">(.+?)</a>', div)
+	div = BeautifulSoup(http_req(url)).find("div", {"id": "tab1"})
 
+	if not order:
+		tvs = div.findAll("a")	
+	else:
+		tvs = [s.parent for s in div.findAll("a", text = re.compile(r"^" + order + ".+?$"))]
+	
 	current = 0
 	total = len(tvs)
 
 	while current <= total - 1:
-		title = tvs[current][1]
-		link = url + 'seriale-' + tvs[current][0] + '-online-download.html'
+		title = htmlFilter(tvs[current].text)
+		link = urlFilter(tvs[current]['href'])
 
-		addDir(title,link,2)
+		addDir(title, link, 2)
 
 		if progress.iscanceled(): sys.exit()
 
@@ -95,7 +98,7 @@ def getTVshows(url,order=None):
 		progress.update(percent, "", message, "")
 
 		current += 1
-		
+	
 	progress.close()
 	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -520,8 +523,8 @@ def getSources(url):
 			movieId = re.search('-([\d]+)-', url)
 			url = siteUrl + 'player-film-' + movieId.group(1) + '-sfast.html'
 
-		match = re.search(r'http://w?w?w?.?(?:fastupload|superweb).?r?o?l?.ro/?v?i?d?e?o?/(.+?).html?', http_req(url))
-		url = 'http://superweb.rol.ro/video/' + match.group(1) + '.html'
+		match = re.search(r'http://(?:www.)?(?:fastupload|superweb)(?:.rol)?.ro/?(?:video)?/(?:.+?).html?', http_req(url))
+		url = match.group(0)
 		match = re.search(r"'file': '(.+?)',", http_req(url))
 		videoLink = match.group(1) + '|referer=' + url
 		
@@ -596,6 +599,12 @@ def htmlFilter(htmlstring, trimspaces = False):
 	if trimspaces:
 		htmlstring = "".join(line.strip() for line in htmlstring.split("\n"))
 	return htmlstring
+
+
+def urlFilter(url):
+	if not re.search(siteUrl, url):
+		url = siteUrl + url
+	return url
 
 
 def set_params(dict):
