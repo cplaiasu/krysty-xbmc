@@ -1,3 +1,7 @@
+0.4.12
+-> solved: empty list for movies
+-> changed: movies are listed on multiple pages for better loading speed
+
 0.4.11
 -> solved: empty list for tvshows
 

@@ -28,6 +28,7 @@ from resources.lib.ga import track
 siteUrl		= 'http://www.990.ro/'
 searchUrl	= 'http://www.990.ro/functions/search3/live_search_using_jquery_ajax/search.php'
 tvShowsUrl	= 'http://www.990.ro/seriale-lista.html'
+moviesUrl	= 'http://www.990.ro/toate-filmele.php'
 
 USER_AGENT 	= 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
 ACCEPT 		= 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
@@ -48,7 +49,7 @@ track(plugin.getPluginVersion())
 
 def MAIN():
 	addDir('TV Shows',tvShowsUrl,4,TVshowsIcon)
-	addDir('Movies',siteUrl,10,MoviesIcon)
+	addDir('Movies',moviesUrl,10,MoviesIcon)
 	addDir('Search',siteUrl,16,SearchIcon)
 	addDir('Settings',siteUrl,99,SettingsIcon)
 	addDir('Clear Cache',siteUrl,18)
@@ -260,14 +261,14 @@ def lastAdded(cat):
 
 def MOVIES(url,order=None):
 	if order == 'year':
-		years = re.findall(r'<a href="filme-ani(.+?)" title="[0-9]+">Filme (.+?)</a>', http_req(url))
-		for link, year in years:
-			addDir(str(year),url+'filme-ani'+link,9,MoviesIcon)
+		div = BeautifulSoup(http_req(url)).findAll("div", {"id": "filtre"})[1].findAll("a", attrs = {"class": None})
+		for a in div:
+			addDir(a.text, moviesUrl + a['href'], 9, MoviesIcon)
 	
 	elif order == 'genre':
-		genres = re.findall(r'<a href="filme-gen(.+?)" title=".+?">(.+?)</a>', http_req(url))
-		for link, genre in genres:
-			addDir(str(plugin.ro2en(genre)),url+'filme-gen'+link,9,MoviesIcon)
+		div = BeautifulSoup(http_req(url)).find("div", {"id": "filtre"}).findAll("a", attrs = {"class": None})
+		for a in div:
+			addDir(plugin.ro2en(a.text), moviesUrl + a['href'], 9, MoviesIcon)
 	
 	else:
 		addDir('Search',url,14,MoviesIcon)
@@ -283,64 +284,38 @@ def getMovies(url):
 	progress.create('Progress', 'Please wait...')
 	progress.update(1, "", "Loading list - 1%", "")
 	
-	list = []
+	soup = BeautifulSoup(http_req(url))
 	
-	cache = False
-	if plugin.getSetting("enableCache") == 'true':
-		cacheFilename = re.search('\.ro\/(.+?)\..+?\?.+?=(.+?)&', url)
-		cacheFilename = cacheFilename.group(1) + '-' + cacheFilename.group(2)
-		cache = plugin.cacheLoad(cacheFilename, int(plugin.getSetting("cacheExpire")))
-		if cache:
-			list = cache
-
-	if not cache:
-		pages = str(BeautifulSoup(http_req(url)).find("div", {"id": "numarpagini"}))
-		pages = max(int(x) for x in re.findall('([\d]+)<\/a>', pages))
-
-		count = 1
-		page = 1
-		total_movies = 0
-		
-		while page <= pages:
-			url = re.sub('pagina=\d+', 'pagina='+str(page), url)
-			
-			div = htmlFilter(str(BeautifulSoup(http_req(url)).find("div", {"id": "content"})), True)
-			movies = re.findall('class="link">(.+?)<\/a> ?\(([\d]+)\)', div)
-			link = BeautifulSoup(div).findAll("a", {"class": "link"})
-			link = [re.match(r'<a href="filme-(.+?)-online-download.html" .+? class="link">.+?</a>', str(x)) for x in link]
-			thumb = re.findall(r'<img src="../(.+?)"', div)
-			
-			total_movies = len(movies) * pages
-			
-			current = 0
-			while current <= len(movies) - 1:			
-				movie = {}
-				movie['name'] = movies[current][0]
-				movie['year'] = movies[current][1]
-				movie['url'] = siteUrl + 'filme-' + link[current].group(1) + '-online-download.html'
-				movie['thumbnail'] = siteUrl + thumb[current]
-				list.append(movie)
-				
-				current = current + 1
-				
-				if progress.iscanceled(): sys.exit()
-				
-				percent = int((count * 100) / total_movies)
-				if page == pages: percent = 100
-				message = "Loading list - " + str(percent) + "%"
-				progress.update(percent, "Enabling cache storage will speed up future loads.", message, "")
-				
-				count += 1
-			
-			page += 1
-		
-		if plugin.getSetting("enableCache") == 'true':
-			plugin.cacheList(list, cacheFilename)
+	pages = str(soup.find("div", {"id": "numarpagini"}))
+	pages = max(int(x) for x in re.findall(r'([\d]+)</a>', pages))
+	page = int(re.search('pagina=(\d+)', url).group(1))
 	
-	for movie in list:
-		title = '%s (%s)' % (movie['name'], movie['year'])
+	div = soup.find("div", {"id": "content"})
+	links  = div.findAll("a", {"class": "link"})
+	thumbs = re.findall(r'<img src="../(.+?)"', str(div))
+	years = re.findall(r'Aparitie: ?(\d+)', str(div))
+	
+	total = len(links)
+	current = 0
+	
+	while current <= total - 1:
+		name = "%s (%s)" % (htmlFilter(links[current].text), years[current])
+		link = urlFilter(links[current]['href'])
+		thumbnail = siteUrl + thumbs[current]
 		
-		addDir(title,movie['url'],8,movie['thumbnail'],title,folder=False)
+		addDir(name, link, 8, thumbnail, name, folder=False)
+		
+		if progress.iscanceled(): sys.exit()
+		
+		percent = int(((current + 1) * 100) / total)
+		message = "Loading list - " + str(percent) + "%"
+		progress.update(percent, "", message, "")
+				
+		current += 1
+	
+	if not page == pages:
+		url = re.sub('pagina=\d+', 'pagina=' + str(page + 1), url)
+		addDir("Next Page >>", url, 9)
 	
 	progress.close()
 	
