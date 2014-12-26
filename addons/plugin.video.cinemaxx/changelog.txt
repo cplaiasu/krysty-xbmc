@@ -1,3 +1,6 @@
+1.0.6
+-> changed: movies are listed on multiple pages for better loading speed
+
 1.0.5
 -> solved slowdowns
 

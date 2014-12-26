@@ -48,8 +48,8 @@ def MAIN():
 	addDir('Categorii', siteUrl, 1, moviesIcon)
 	addDir('Adaugate Recent', newMoviesUrl, 11, moviesIcon)
 	addDir('Cautare', siteUrl, 2, searchIcon)
-	addDir('Setari', siteUrl, 98, settingsIcon)
-	addDir('Golire Cache', siteUrl, 99)
+	#addDir('Setari', siteUrl, 98, settingsIcon)
+	#addDir('Golire Cache', siteUrl, 99)
 	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -85,61 +85,41 @@ def getMovies(url, limit=False, cat='pm-ul-browse-videos'):
 	progress.create('Incarcare', 'Asteptati...')
 	progress.update(1, "", "Incarcare lista - 1%", "")
 
-	list = []
-
-	cache = False
-	if plugin.getSetting("enableCache") == 'true' and not limit:
-		cacheFilename = re.search('browse-(.+?)-online', url)
-		cacheFilename = cacheFilename.group(1)
-		cache = plugin.cacheLoad(cacheFilename, int(plugin.getSetting("cacheExpire")))
-		if cache:
-			list = cache
-
-	if not cache:
-		pages = BeautifulSoup(http_req(url)).find('div', {'class': 'pagination'})
-		if pages and not limit:
-			pages = pages.find_all('a')
-			pages = max(int(x) for x in re.findall('([\d]+)', str(pages)))
-		else:
-			pages = 1
-
-		count = 1
+	soup = BeautifulSoup(http_req(url))
+	
+	pages = soup.find('div', {'class': 'pagination'})
+	if pages and not limit:
+		pages = pages.find_all('a')
+		pages = max(int(x) for x in re.findall('([\d]+)', str(pages)))
+		page = int(re.search('\d+', url).group(0))
+	else:
+		pages = 1
 		page = 1
-		total_movies = 0
-
-		while page <= pages:
-			if not limit: url = re.sub('\d+', str(page), url)
-			
-			html = BeautifulSoup(http_req(url)).find('ul', {'id':'pm-grid', 'class': cat}).find_all('a', {'class': 'pm-thumb-fix'})
-			
-			total_movies = len(html) * pages
-			
-			for tag in html:
-				name = tag.select('img')[0].get('alt').encode('utf-8').strip()
-				name = re.sub('F?f?ilm ?-?|vizioneaza|online', '', name).strip()
-				
-				movie = {}
-				movie['name'] = name
-				movie['url'] = tag.get('href')
-				movie['thumbnail'] = tag.select('img')[0].get('src')
-				list.append(movie)
-				
-				if progress.iscanceled(): sys.exit()
-				
-				percent = int((count * 100) / total_movies)
-				if page == pages: percent = 100
-				message = "Incarcare lista - " + str(percent) + "%"
-				progress.update(percent, "", message, "")
-				
-				count += 1
-			
-			page += 1
-			
-		if plugin.getSetting("enableCache") == 'true' and not limit:
-			plugin.cacheList(list, cacheFilename)
-
-	for movie in list:
-		addDir(movie['name'], movie['url'], 3, movie['thumbnail'])
+	
+	tags = soup.find('ul', {'id':'pm-grid', 'class': cat}).find_all('a', {'class': 'pm-thumb-fix'})
+	
+	total = len(tags)
+	current = 0
+	
+	while current <= total - 1:
+		name = tags[current].select('img')[0].get('alt').encode('utf-8').strip()
+		name = re.sub('F?f?ilm ?-?|vizioneaza|online', '', name).strip()
+		link = tags[current].get('href')
+		thumbnail = tags[current].select('img')[0].get('src')
+		
+		addDir(name, link, 3, thumbnail)
+		
+		if progress.iscanceled(): sys.exit()
+		
+		percent = int(((current + 1) * 100) / total)
+		message = "Incarcare lista - " + str(percent) + "%"
+		progress.update(percent, "", message, "")
+		
+		current += 1
+		
+	if not page == pages:
+		url = re.sub('\d+', str(page + 1), url)
+		addDir("Pagina Urmatoare >>", url, 10)
 
 	progress.close()
 
