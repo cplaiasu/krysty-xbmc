@@ -2,7 +2,7 @@
 <addons>
 <addon id="plugin.video.990"
        name="990.ro"
-       version="0.4.12"
+       version="0.4.13"
        provider-name="krysty">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -21,7 +21,7 @@
 
 <addon id="plugin.video.cinemaxx"
        name="cinemaxx.ro"
-       version="1.0.6"
+       version="1.0.7"
        provider-name="krysty">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

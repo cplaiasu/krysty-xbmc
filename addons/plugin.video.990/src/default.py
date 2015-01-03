@@ -348,8 +348,9 @@ def SEARCH(cat):
 		progress.update(1, "", "Loading list - 1%", "")
 		
 		searchText = {'kw': inputText}
-		data = urllib.urlencode(searchText)
-		req = urllib2.Request(searchUrl, data, headers = {'User-Agent': USER_AGENT})
+		req = urllib2.Request(searchUrl, urllib.urlencode(searchText))
+		req.add_header('User-Agent', USER_AGENT)
+		req.add_header('Cache-Control', 'no-transform')
 		response = htmlFilter(urllib2.urlopen(req).read())
 		
 		if cat == 'all':
@@ -398,6 +399,7 @@ def http_req(url):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', USER_AGENT)
 	req.add_header('Accept', ACCEPT)
+	req.add_header('Cache-Control', 'no-transform')
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()

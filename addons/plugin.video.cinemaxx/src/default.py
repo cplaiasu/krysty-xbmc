@@ -103,7 +103,7 @@ def getMovies(url, limit=False, cat='pm-ul-browse-videos'):
 	
 	while current <= total - 1:
 		name = tags[current].select('img')[0].get('alt').encode('utf-8').strip()
-		name = re.sub('F?f?ilm ?-?|vizioneaza|online', '', name).strip()
+		name = re.sub('F?f?ilme? ?-?|vizioneaza|online', '', name).strip()
 		link = tags[current].get('href')
 		thumbnail = tags[current].select('img')[0].get('src')
 		
@@ -150,10 +150,10 @@ def search():
 			sys.exit()
 		
 		searchText = {'queryString': inputText}
-		data = urllib.urlencode(searchText)
-		req = urllib2.Request(searchUrl, data)
+		req = urllib2.Request(searchUrl, urllib.urlencode(searchText))
 		req.add_header('User-Agent', USER_AGENT)
 		req.add_header('Accept', ACCEPT)
+		req.add_header('Cache-Control', 'no-transform')
 		req.add_header('Referer', 'http://www.cinemaxx.ro/search.php?keywords=%s' % urllib.quote_plus(inputText))
 		response = urllib2.urlopen(req).read()
 		
@@ -179,6 +179,7 @@ def http_req(url, getCookie=False):
 	req = urllib2.Request(url)
 	req.add_header('User-Agent', USER_AGENT)
 	req.add_header('Accept', ACCEPT)
+	req.add_header('Cache-Control', 'no-transform')
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()
