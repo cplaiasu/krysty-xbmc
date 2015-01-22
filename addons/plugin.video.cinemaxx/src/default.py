@@ -1,20 +1,20 @@
 """
-    cinemaxx.ro XBMC Addon
-    Copyright (C) 2012-2014 krysty
+	cinemaxx.ro Addon for KODI (formerly knows as XBMC)
+	Copyright (C) 2012-2015 krysty
 	https://code.google.com/p/krysty-xbmc/
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys, os, re
@@ -25,31 +25,38 @@ import json
 import plugin, db
 from resources.lib.ga import track
 
+PLUGIN_PATH = plugin.getPluginPath()
 
-siteUrl		= 'http://www.cinemaxx.ro/'
-searchUrl	= 'http://www.cinemaxx.ro/ajax_search.php'
-newMoviesUrl= 'http://www.cinemaxx.ro/newvideos.html'
+URL = {}
+URL['base']			= 'http://www.cinemaxx.ro/'
+URL['search']		= 'http://www.cinemaxx.ro/ajax_search.php'
+URL['newMovies']	= 'http://www.cinemaxx.ro/newvideos.html'
 
-USER_AGENT 	= 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
-ACCEPT 		= 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+HEADERS = {
+	'User-Agent': 	 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
+	'Accept': 		 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Cache-Control': 'no-transform'
+}
 
-moviesIcon 	 = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'moviesIcon.png')
-searchIcon 	 = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'searchIcon.png')
-settingsIcon = os.path.join(plugin.getPluginPath(), 'resources', 'media', 'settingsIcon.png')
+ICON = {
+	'movie':	'moviesicon.png',
+	'search':	'searchicon.png',
+	'settings': 'settingsicon.png'
+}
 
+for k, v in ICON.iteritems():
+	ICON[k] = os.path.join(PLUGIN_PATH, 'resources', 'media', v)
 print plugin.getPluginVersion()
-
 DB = db.DB()
-
 track(plugin.getPluginVersion())
 
 
 def MAIN():
-	addDir('Categorii', siteUrl, 1, moviesIcon)
-	addDir('Adaugate Recent', newMoviesUrl, 11, moviesIcon)
-	addDir('Cautare', siteUrl, 2, searchIcon)
-	#addDir('Setari', siteUrl, 98, settingsIcon)
-	#addDir('Golire Cache', siteUrl, 99)
+	addDir('Categorii', URL['base'], 1, ICON['movie'])
+	addDir('Adaugate Recent', URL['newMovies'], 11, ICON['movie'])
+	addDir('Cautare', URL['base'], 2, ICON['search'])
+	#addDir('Setari', URL['base'], 98, ICON['settings'])
+	#addDir('Golire Cache', URL['base'], 99)
 	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -149,15 +156,11 @@ def search():
 			dialog = xbmcgui.Dialog().ok('Cautare', 'Nimic de cautat.')
 			sys.exit()
 		
+		header = HEADERS
+		header['Referer'] = 'http://www.cinemaxx.ro/search.php?keywords=%s' % (urllib.quote_plus(inputText))
 		searchText = {'queryString': inputText}
-		req = urllib2.Request(searchUrl, urllib.urlencode(searchText))
-		req.add_header('User-Agent', USER_AGENT)
-		req.add_header('Accept', ACCEPT)
-		req.add_header('Cache-Control', 'no-transform')
-		req.add_header('Referer', 'http://www.cinemaxx.ro/search.php?keywords=%s' % urllib.quote_plus(inputText))
-		response = urllib2.urlopen(req).read()
-		
-		html = BeautifulSoup(response).find_all('a')
+		html = http_req(URL['search'], data = searchText, customHeader = header)
+		html = BeautifulSoup(html).find_all('a')
 		
 		for tag in html:
 			movie = {}
@@ -175,11 +178,11 @@ def search():
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
-def http_req(url, getCookie=False):
-	req = urllib2.Request(url)
-	req.add_header('User-Agent', USER_AGENT)
-	req.add_header('Accept', ACCEPT)
-	req.add_header('Cache-Control', 'no-transform')
+def http_req(url, getCookie=False, data=None, customHeader=None):
+	if data: data = urllib.urlencode(data)
+	if customHeader:
+		req = urllib2.Request(url, data, customHeader)
+	req = urllib2.Request(url, data, HEADERS)
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()
@@ -188,10 +191,9 @@ def http_req(url, getCookie=False):
 		return {'source': source, 'cookie': cookie}
 	return source
 
-	
+
 def playStream(url,title,thumbnail):
 	win = xbmcgui.Window(10000)
-	print title
 	win.setProperty('cinemaxx.playing.title', title.lower())
 	
 	item = xbmcgui.ListItem(title, iconImage="DefaultVideo.png", thumbnailImage=thumbnail)
@@ -252,24 +254,29 @@ def getSources(url):
 	
 	if(len(multiMirrors) != 0):
 		for i in range(len(multiMirrors)):
-			mirrors.append('%sajax.php?p=custom&do=requestmirror&vid=%s&mirror=%s' % (siteUrl, params['vid'], i+1))
+			mirrors.append('%sajax.php?p=custom&do=requestmirror&vid=%s&mirror=%s' % (URL['base'], params['vid'], i+1))
 	else:
-		mirrors.append('%sajax.php?p=video&do=getplayer&vid=%s' % (siteUrl, params['vid']))
+		mirrors.append('%sajax.php?p=video&do=getplayer&vid=%s' % (URL['base'], params['vid']))
 	
 	mirrors.reverse()
 	
 	for mirror in mirrors:
 		try:
 			mirrorUrl = BeautifulSoup(http_req(mirror)).find('iframe').attrs['src']
+			mirrorUrl = re.sub(r'https?:\/\/(?:www\.)?.+?\.li/?\??', '', mirrorUrl)
 		except:
 			mirrorUrl = ''
 		
 		if(re.search(r'mail.ru', mirrorUrl)):
 			try:
-				srcMailRu = resolveMailRu(mirrorUrl)
-				for source in srcMailRu[0]:
+				source = BeautifulSoup(http_req(mirrorUrl)).find_all('script', {'type': 'text/javascript'})
+				jsonUrl = re.search(r'"metadataUrl":"(.+?)"', str(source)).group(1)
+				req = http_req(jsonUrl, True)
+				jsonSource = json.loads(req['source'])
+				
+				for source in jsonSource['videos']:
 					name = '%s %s' % ('[mail.ru]', source['key'])
-					link = '%s|Cookie=%s' % (source['url'], urllib.quote_plus(srcMailRu[1]))
+					link = '%s|Cookie=%s' % (source['url'], urllib.quote_plus(req['cookie']))
 					item = {'name': name, 'url': link}
 					sources.append(item)
 			except: pass
@@ -281,18 +288,24 @@ def getSources(url):
 					item = {'name': source[0], 'url': source[1]}
 					sources.append(item)
 			except: pass
-	
+		
+		elif(re.search(r'ok.ru', mirrorUrl)):
+			try:
+				id = re.search('\d+', mirrorUrl).group(0)
+				jsonUrl = 'http://ok.ru/dk?cmd=videoPlayerMetadata&mid=' + id
+				jsonSource = json.loads(http_req(jsonUrl))
+				
+				for source in jsonSource['videos']:
+					name = '%s %s' % ('[ok.ru]', plugin.en2ro(source['name']))
+					link = '%s|User-Agent=%s&Accept=%s&Referer=%s'
+					link = link % (source['url'], HEADERS['User-Agent'], HEADERS['Accept'], urllib.quote_plus(URL['base']))
+					
+					item = {'name': name, 'url': link}
+					sources.append(item)
+			except: pass
 	return sources
 
 
-def resolveMailRu(url):
-	source = BeautifulSoup(http_req(url)).find_all('script', {'type': 'text/javascript'})
-	jsonUrl = re.search(r'"metadataUrl":"(.+?)"', str(source)).group(1)
-	req = http_req(jsonUrl, True)
-	jsonSource = json.loads(req['source'])
-	return [jsonSource['videos'], req['cookie']]
-
-	
 def addDir(name, url, mode, thumbnail='', folder=True):
 	ok = True
 	params = {'name': name, 'mode': mode, 'url': url, 'thumbnail': thumbnail}

@@ -1,83 +1,57 @@
 #------------------------------------------------------------
-# getvk.py URL wrapper for vk / vkontakte videos 
 #
-# based in:
-# pelisalacarta - XBMC Plugin
-# Conector para VK Server
-# http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
-#
-# Modify: 2011-09-12, by Ivo Brhel
-# Modify: 2012-05-03, by vdo < vdo.pure at gmail.com >
-# Modify: 2014-10-23, by krysty 
+# based on getvk.py
+# by Ivo Brhel, vdo < vdo.pure at gmail.com >
+# https://code.google.com/p/getvk/
 #
 #------------------------------------------------------------
 
-import os, sys, re
-
+import re
 
 def getVkVideos(html):
-    html = html.replace("amp;","")
-    videourl = ""
-    regexp = re.compile(r'vkid=([^\&]+)\&')
-    match = regexp.search(html)
-    vkid = ""
-    if match is not None:
-        vkid = match.group(1)
-    
-    patron  = "var video_host = '([^']+)'.*?"
-    patron += "var video_uid = '([^']+)'.*?"
-    patron += "var video_vtag = '([^']+)'.*?"
-    patron += "var video_no_flv = ([^;]+);.*?"
-    patron += "var video_max_hd = '([^']+)'"
-    matches = re.compile(patron,re.DOTALL).findall(html)
-
-    video_urls = []
-
-    if len(matches) > 0:
-        for match in matches:
-            if match[3].strip() == "0" and match[1] != "0":
-                tipo = "flv"
-                if "http://" in match[0]:
-                    videourl = "%s/u%s/videos/%s.%s" % (match[0],match[1],match[2],tipo)
-                else:
-                    videourl = "http://%s/u%s/videos/%s.%s" % (match[0],match[1],match[2],tipo)
-                
-                video_urls.append(["[vk.com] FLV",videourl])
-
-            elif match[1]== "0" and vkid != "":
-                tipo = "flv"
-                if "http://" in match[0]:
-                    videourl = "%s/assets/videos/%s%s.vk.%s" % (match[0],match[2],vkid,tipo)
-                else:
-                    videourl = "http://%s/assets/videos/%s%s.vk.%s" % (match[0],match[2],vkid,tipo)
-                
-                video_urls.append( ["FLV [vk]",videourl])
-                
-            else:
-                if match[4]=="0":
-                    video_urls.append(["[vk.com] 240p", getMP4Link(match[0],match[1],match[2],"240.mp4")])
-                elif match[4]=="1":
-                    video_urls.append(["[vk.com] 240p", getMP4Link(match[0],match[1],match[2],"240.mp4")])
-                    video_urls.append(["[vk.com] 360p", getMP4Link(match[0],match[1],match[2],"360.mp4")])
-                elif match[4]=="2":
-                    video_urls.append(["[vk.com] 240p", getMP4Link(match[0],match[1],match[2],"240.mp4")])
-                    video_urls.append(["[vk.com] 360p", getMP4Link(match[0],match[1],match[2],"360.mp4")])
-                    video_urls.append(["[vk.com] 480p", getMP4Link(match[0],match[1],match[2],"480.mp4")])
-                elif match[4]=="3":
-                    video_urls.append(["[vk.com] 240p", getMP4Link(match[0],match[1],match[2],"240.mp4")])
-                    video_urls.append(["[vk.com] 360p", getMP4Link(match[0],match[1],match[2],"360.mp4")])
-                    video_urls.append(["[vk.com] 480p", getMP4Link(match[0],match[1],match[2],"480.mp4")])
-                    video_urls.append(["[vk.com] 720p", getMP4Link(match[0],match[1],match[2],"720.mp4")])
-                else:
-                    video_urls.append(["[vk.com] 240p", getMP4Link(match[0],match[1],match[2],"240.mp4")])
-                    video_urls.append(["[vk.com] 360p", getMP4Link(match[0],match[1],match[2],"360.mp4")])
-
-    return video_urls
+	html = html.replace('amp;', '')
+	
+	vars = dict.fromkeys(['video_host', 'video_uid', 'video_vtag'])
+	
+	for var in vars.iterkeys():
+		value = re.search(var + r' ?= ?[\'"](.+?)[\'"]', html)
+		if not value: return
+		vars[var] = value.group(1).strip()
+	
+	vars['video_host'] = formatUrl(vars['video_host'])
+	
+	video_urls = []
+	
+	regex = r'(' + vars['video_vtag'] + '\.([240|360|480|720|1080]+)\.mp4)'
+	match = re.compile(regex, re.DOTALL).findall(html)
+	match = sorted(list(set(match)))
+	if len(match) > 0:
+		for quality in match:
+			name = "[vk.com] %sp" % (quality[1])
+			url = "%s/u%s/videos/%s" % (vars['video_host'], vars['video_uid'], quality[0])
+			video_urls.append([name, url])
+	
+	match = re.search(r'video_no_flv = [\'"](.+?)[\'"];', html)
+	noflv = match.group(1).strip() if match else ""
+	
+	if noflv == "0" and vars['video_uid'] != "0":
+		name = "[vk.com] FLV"
+		url = "%s/u%s/videos/%s.flv" % (vars['video_host'], vars['video_uid'], vars['video_vtag'])
+		video_urls[0:0] = [[name, url]]
+	
+	elif vars['video_uid'] == "0":
+		match = re.search(r'vkid=([^\&]+)\&', html)
+		if match:
+			vkid = match.group(1).strip()
+			url = "%s/assets/videos/%s%s.vk.flv" % (vars['video_host'], vars['video_tag'], vkid)
+			video_urls[0:0] = [["[vk.com] FLV", url]]
+	
+	return video_urls
 
 
-def getMP4Link(match0,match1,match2,tipo):
-    if match0.endswith("/"):
-        videourl = "%su%s/videos/%s.%s" % (match0,match1,match2,tipo)
-    else:
-        videourl = "%s/u%s/videos/%s.%s" % (match0,match1,match2,tipo)
-    return videourl
+def formatUrl(url):
+	if not url.startswith('http'):
+		url = url + 'http://'
+	if url.endswith('/'):
+		url = url[:-1]
+	return url

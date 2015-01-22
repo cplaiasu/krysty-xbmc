@@ -81,3 +81,17 @@ def clearCache():
 			os.remove(profilePath + file)
 		return True
 	except: return False
+		
+def en2ro(string):
+	dict = {
+			'sd':			'calitate standard',
+			'low':			'calitate redusa',
+			'lowest':		'calitate scazuta',
+			'mobile':		'calitate mobil',
+	}
+	try:
+		string = string.strip()
+		string = re.compile(r'\b(' + '|'.join(dict.keys()) + r')\b').sub(lambda x: dict[x.group()], string)
+	except:
+		pass
+	return string

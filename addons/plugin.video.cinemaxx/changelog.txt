@@ -1,3 +1,8 @@
+1.0.8
+-> fixed: url video links resolver for vk.com
+-> added: url video links resolver for ok.ru
+-> code cleanup
+
 1.0.7
 -> fixed: Vodafone injection, issue reported by dhongu
 
@@ -17,7 +22,7 @@
 -> added support for multiple mirrors
 
 1.0.2
--> fix for mail.ru video sources
+-> fixed: url video links resolver for mail.ru
 
 1.0.1
 -> removed repository entry from addon.xml, this should solve
