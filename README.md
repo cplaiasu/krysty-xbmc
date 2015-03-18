@@ -18,4 +18,4 @@ Notes:
 
 - EN: For those who can't install plugin.video.cinemaxx.ro, close XBMC, delete the file C:/Users/YOUR_USER_NAME/AppData?/Roaming/XBMC/userdata/Database/Addons.db (file with bigger number is for current installed version) where XBMC stores addons information. On Android devices, I think the location is sdcard/Android/data/org.xbmc.xbmc/files/.xbmc/userdata/.
 
-[![Analytics](https://ga-beacon.appspot.com/UA-46834994-1/krysty-xbmc/README.md)](https://github.com/igrigorik/ga-beacon?flat)
+[![Analytics](https://ga-beacon.appspot.com/UA-46834994-1/krysty-xbmc/README.md)](https://github.com/igrigorik/ga-beacon)
