@@ -12,10 +12,10 @@ Notes:
 
 - all plugins successfully tested on XBMC 12.3 Frodo, XBMC 13.2 Gotham, KODI 14.1 Helix
 
-- for better performance right click [here](https://github.com/yokrysty/krysty-xbmc/raw/master/settings/advancedsettings.xml), click 'Save link as' (Google Chrome) or 'Save Linked Content As' (Opera), save the file to 'C:/Users/YOUR USERNAME/AppData/Roaming/XBMC/userdata'
+- for better performance right click [here](https://github.com/yokrysty/krysty-xbmc/raw/master/settings/advancedsettings.xml), click 'Save link as' (Google Chrome) or 'Save Linked Content As' (Opera), save the file to 'C:/Users/YOUR USERNAME/AppData/Roaming/KODI(or XBMC)/userdata'
 
-- RO: Daca nu reusiti sa instalati plugin-ul pentru cinemaxx.ro: inchideti XBMC, stergeti fisierul C:/Users/UTILIZATORUL_ACTUAL/AppData/Roaming/XBMC/userdata/Database/Addons.db unde XBMC pastreaza informatiile despre addon-uri. (fisierul cu numarul cel mai mare este pentru versiunea actuala care este instalata). Pe Android cred ca locatia este sdcard/Android/data/org.xbmc.xbmc/files/.xbmc/userdata/
+- RO: Daca nu reusiti sa instalati plugin-ul pentru cinemaxx.ro: inchideti KODI (XBMC), stergeti fisierul C:/Users/UTILIZATORUL_ACTUAL/AppData/Roaming/KODI(or XBMC)/userdata/Database/Addons.db unde XBMC pastreaza informatiile despre addon-uri. (fisierul cu numarul cel mai mare este pentru versiunea actuala care este instalata). Pe Android cred ca locatia este sdcard/Android/data/org.xbmc.xbmc/files/.xbmc/userdata/
 
-- EN: For those who can't install plugin.video.cinemaxx.ro, close XBMC, delete the file C:/Users/YOUR_USER_NAME/AppData?/Roaming/XBMC/userdata/Database/Addons.db (file with bigger number is for current installed version) where XBMC stores addons information. On Android devices, I think the location is sdcard/Android/data/org.xbmc.xbmc/files/.xbmc/userdata/.
+- EN: For those who can't install plugin.video.cinemaxx.ro, close KODI (XBMC), delete the file C:/Users/YOUR_USER_NAME/AppData?/Roaming/KODI(or XBMC)/userdata/Database/Addons.db (file with bigger number is for current installed version) where XBMC stores addons information. On Android devices, I think the location is sdcard/Android/data/org.xbmc.kodi/files/.kodi/userdata/ (or sdcard/Android/data/org.xbmc.xbmc/files/.xbmc/userdata/).
 
 [![Analytics](https://ga-beacon.appspot.com/UA-46834994-1/krysty-xbmc/README.md)](https://github.com/igrigorik/ga-beacon)
