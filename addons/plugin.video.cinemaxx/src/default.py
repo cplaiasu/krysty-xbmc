@@ -1,7 +1,7 @@
 """
 	cinemaxx.ro Addon for KODI (formerly knows as XBMC)
 	Copyright (C) 2012-2015 krysty
-	https://code.google.com/p/krysty-xbmc/
+	https://github.com/yokrysty/krysty-xbmc
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ def categories(url):
 	progress.create('Incarcare', 'Asteptati...')
 	progress.update(1, "", "Incarcare lista - 1%", "")
 	
-	html = BeautifulSoup(http_req(url)).find('ul', {'class': 'pm-browse-ul-subcats'}).find_all('a')
+	html = BeautifulSoup(http_req(url)).find('ul', {'id': 'ul_categories'}).find_all('a')
 	
 	total = len(html)
 	current = 1
@@ -87,14 +87,14 @@ def categories(url):
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 
-def getMovies(url, limit=False, cat='pm-ul-browse-videos'):
+def getMovies(url, limit=False):
 	progress = xbmcgui.DialogProgress()
 	progress.create('Incarcare', 'Asteptati...')
 	progress.update(1, "", "Incarcare lista - 1%", "")
 
 	soup = BeautifulSoup(http_req(url))
 	
-	pages = soup.find('div', {'class': 'pagination'})
+	pages = soup.find('ul', {'class': 'pagination'})
 	if pages and not limit:
 		pages = pages.find_all('a')
 		pages = max(int(x) for x in re.findall('([\d]+)', str(pages)))
@@ -103,16 +103,16 @@ def getMovies(url, limit=False, cat='pm-ul-browse-videos'):
 		pages = 1
 		page = 1
 	
-	tags = soup.find('ul', {'id':'pm-grid', 'class': cat}).find_all('a', {'class': 'pm-thumb-fix'})
+	tags = soup.find('ul', {'class': 'videolist'}).find_all('a')
 	
 	total = len(tags)
 	current = 0
 	
 	while current <= total - 1:
-		name = tags[current].select('img')[0].get('alt').encode('utf-8').strip()
-		name = re.sub('F?f?ilme? ?-?|vizioneaza|online', '', name).strip()
+		img = tags[current].select('img')[0]
+		name = nameFilter(img.get('alt').encode('utf-8'))
 		link = tags[current].get('href')
-		thumbnail = tags[current].select('img')[0].get('src')
+		thumbnail = img.get('src')
 		
 		addDir(name, link, 3, thumbnail)
 		
@@ -127,9 +127,9 @@ def getMovies(url, limit=False, cat='pm-ul-browse-videos'):
 	if not page == pages:
 		url = re.sub('\d+', str(page + 1), url)
 		addDir("Pagina Urmatoare >>", url, 10)
-
+	
 	progress.close()
-
+	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 	
@@ -163,10 +163,11 @@ def search():
 		html = BeautifulSoup(html).find_all('a')
 		
 		for tag in html:
+			img = tag.select('img')[0]
 			movie = {}
-			movie['name'] = tag.select('img')[0].get('alt').encode('utf-8').strip()
+			movie['name'] = nameFilter(img.get('alt').encode('utf-8'))
 			movie['url'] = tag.get('href')
-			movie['thumbnail'] = tag.select('img')[0].get('src')
+			movie['thumbnail'] = img.get('src')
 			list.append(movie)
 	
 	else: sys.exit()
@@ -180,9 +181,9 @@ def search():
 
 def http_req(url, getCookie=False, data=None, customHeader=None):
 	if data: data = urllib.urlencode(data)
+	req = urllib2.Request(url, data, HEADERS)
 	if customHeader:
 		req = urllib2.Request(url, data, customHeader)
-	req = urllib2.Request(url, data, HEADERS)
 	response = urllib2.urlopen(req)
 	source = response.read()
 	response.close()
@@ -233,13 +234,14 @@ def selectSource(url, title='', thumbnail=''):
 def getSources(url):
 	sources = []
 	
-	rawhtml = http_req(url)
+	soup = BeautifulSoup(http_req(url))
+	
 	params = {}
 	
 	try:
 		params['vid'] = re.search(r'_([0-9a-z]+).html?', url).group(1)
 	except:
-		html = BeautifulSoup(rawhtml).find_all('script', {'type': 'text/javascript'})
+		html = soup.find_all('script', {'type': 'text/javascript'})
 		html = "".join(line.strip() for line in str(html).split("\n"))
 		html = re.findall(r'\$\.ajax\({.+?data: {(.+?)}', html)
 		html = html[1].replace('"', '').split(',')
@@ -250,19 +252,26 @@ def getSources(url):
 	
 	mirrors = []
 	
-	multiMirrors = re.findall(r'<img src=".+?templates/s[1-9].png"', rawhtml)
+	multiMirrors = soup.find('ul', {'id': 'menu-bar'})
+	if multiMirrors: multiMirrors = multiMirrors.find_all('a')
 	
-	if(len(multiMirrors) != 0):
+	if(multiMirrors):
 		for i in range(len(multiMirrors)):
 			mirrors.append('%sajax.php?p=custom&do=requestmirror&vid=%s&mirror=%s' % (URL['base'], params['vid'], i+1))
 	else:
-		mirrors.append('%sajax.php?p=video&do=getplayer&vid=%s' % (URL['base'], params['vid']))
+		if(soup.find('iframe')):
+			mirrors.append(url)
+		else:
+			mirrors.append('%sajax.php?p=video&do=getplayer&vid=%s' % (URL['base'], params['vid']))
 	
 	mirrors.reverse()
 	
 	for mirror in mirrors:
 		try:
-			mirrorUrl = BeautifulSoup(http_req(mirror)).find('iframe').attrs['src']
+			if(mirror == url):
+				mirrorUrl = soup.find('iframe').attrs['src']
+			else:
+				mirrorUrl = BeautifulSoup(http_req(mirror)).find('iframe').attrs['src']
 			mirrorUrl = re.sub(r'https?:\/\/(?:www\.)?.+?\.li/?\??', '', mirrorUrl)
 		except:
 			mirrorUrl = ''
@@ -304,6 +313,10 @@ def getSources(url):
 					sources.append(item)
 			except: pass
 	return sources
+
+
+def nameFilter(name):
+	return re.sub('F?f?ilme? ?-?|vizioneaza|online|subtitrat', '', name).strip()
 
 
 def addDir(name, url, mode, thumbnail='', folder=True):
@@ -376,6 +389,6 @@ elif mode == 1: categories(url)
 elif mode == 2: search()
 elif mode == 3: selectSource(url, name, thumbnail)
 elif mode == 10: getMovies(url)
-elif mode == 11: getMovies(url, True, 'pm-ul-new-videos')
+elif mode == 11: getMovies(url, True)
 elif mode == 98: plugin.openSettings()
 elif mode == 99: clearCache()
