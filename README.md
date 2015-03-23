@@ -1,6 +1,6 @@
-addon releases to users for KODI (formerly known as XBMC).
+<h3>addon releases for KODI (formerly known as XBMC)</h3>
 
-The repository is broken, until I find a suitable solution to fix it, please visit this page frequently (or if the plugin crashes) for the latest updates.
+<strong>The repository is broken, until I find a suitable solution to fix it, please visit this page frequently (or if the plugin crashes) for the latest updates.</strong>
 
 plugin.video.990 v0.4.13 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.13.zip)
 
