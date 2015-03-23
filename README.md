@@ -1,12 +1,12 @@
-This is the repository for distributing stable addon releases to users for KODI (formerly known as XBMC).
+addon releases to users for KODI (formerly known as XBMC).
+
+The repository is broken, until I find a suitable solution to fix it, please visit this page frequently (or if the plugin crashes) for the latest updates.
 
 990.ro and cinemaxx.ro does not host videofiles, merely providing links to other sites.
 
-Repository direct [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/repository.googlecode.krysty-xbmc/repository.googlecode.krysty-xbmc-1.0.4.zip)
+plugin.video.990 v0.4.13 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.13.zip)
 
-plugin.video.990 latest version direct [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.13.zip)
-
-plugin.video.cinemaxx latest version direct [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.8.zip)
+plugin.video.cinemaxx v1.0.8 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.8.zip)
 <br /><br /><br />
 Notes:
 
