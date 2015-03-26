@@ -4,7 +4,7 @@
 
 plugin.video.990 v0.4.13 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.13.zip)
 
-plugin.video.cinemaxx v1.0.8 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.8.zip)
+plugin.video.cinemaxx v1.0.9 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.9.zip)
 
 990.ro and cinemaxx.ro does not host videofiles, merely providing links to other sites.
 <br /><br /><br />
