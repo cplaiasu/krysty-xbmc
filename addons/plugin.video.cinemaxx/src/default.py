@@ -29,7 +29,7 @@ PLUGIN_PATH = plugin.getPluginPath()
 
 URL = {}
 URL['base']			= 'http://www.cinemaxx.ro/'
-URL['search']		= 'http://www.cinemaxx.ro/ajax_search.php'
+URL['search']		= 'http://www.cinemaxx.ro/search.php?keywords='
 URL['newMovies']	= 'http://www.cinemaxx.ro/newvideos.html'
 
 HEADERS = {
@@ -134,8 +134,6 @@ def getMovies(url, limit=False):
 
 	
 def search():
-	list = []
-	
 	kb = xbmc.Keyboard('', 'Search', False)
 	
 	lastSearch = None
@@ -156,25 +154,21 @@ def search():
 			dialog = xbmcgui.Dialog().ok('Cautare', 'Nimic de cautat.')
 			sys.exit()
 		
-		header = HEADERS
-		header['Referer'] = 'http://www.cinemaxx.ro/search.php?keywords=%s' % (urllib.quote_plus(inputText))
-		searchText = {'queryString': inputText}
-		html = http_req(URL['search'], data = searchText, customHeader = header)
-		html = BeautifulSoup(html).find_all('a')
+		url = URL['search'] + urllib.quote_plus(inputText)
+		tags = BeautifulSoup(http_req(url)).find('ul', {'class': 'videolist'}).find_all('a')
 		
-		for tag in html:
-			img = tag.select('img')[0]
-			movie = {}
-			movie['name'] = nameFilter(img.get('alt').encode('utf-8'))
-			movie['url'] = tag.get('href')
-			movie['thumbnail'] = img.get('src')
-			list.append(movie)
+		current = 0
+		while current <= len(tags) - 1 and not current == 10:
+			img = tags[current].select('img')[0]
+			name = nameFilter(img.get('alt').encode('utf-8'))
+			link = tags[current].get('href')
+			thumbnail = img.get('src')
+			
+			addDir(name, link, 3, thumbnail)
+			
+			current += 1
 	
 	else: sys.exit()
-	
-	if list:
-		for movie in list:
-			addDir(movie['name'], movie['url'], 3, movie['thumbnail'])
 	
 	xbmcplugin.endOfDirectory(int(sys.argv[1]))
 

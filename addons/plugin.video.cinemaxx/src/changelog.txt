@@ -1,3 +1,6 @@
+1.0.10
+-> fixed: search function
+
 1.0.9
 -> fixed: plugin was revised to work with the new website
 
