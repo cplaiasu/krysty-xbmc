@@ -1,3 +1,7 @@
+0.4.14
+-> fixed: last added section for movies, issue reported by fanelaru
+-> fixed: YouTube trailers, issue reported by fanelaru
+
 0.4.13
 -> fixed: Vodafone injection, issue reported by dhongu
 

@@ -1,7 +1,7 @@
 """
     990.ro XBMC Addon
     Copyright (C) 2012-2014 krysty
-	https://github.com/yokrysty/krysty-xbmc
+	https://code.google.com/p/krysty-xbmc/
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -240,8 +240,9 @@ def lastAdded(cat):
 			addDir(name,url,8,"",title,season,episode,folder=False)
 		
 		elif type == 'filme':
-			year = re.findall('(\d{4,4})', ep_year)		
-			name = '%s (%s)' % (title, year[0])
+			year = re.findall('(\d{4,4})', ep_year)
+			year = year[0] if year else "unknown"
+			name = '%s (%s)' % (title, year)
 			url = siteUrl + 'filme-' + link + '.html'
 			
 			addDir(name,url,8,"",name,folder=False)
@@ -421,7 +422,7 @@ def youtube_video(url):
 		conn = urllib2.urlopen(url)
 		encoding = conn.headers.getparam('charset')
 		content = conn.read().decode(encoding)
-		s = re.findall(r'"url_encoded_fmt_stream_map": "([^"]+)"', content)
+		s = re.findall(r'"url_encoded_fmt_stream_map": ?"([^"]+)"', content)
 		if s:
 			import HTMLParser
 			s = s[0].split(',')
