@@ -2,7 +2,7 @@
 
 <strong>The repository is broken, until I find a suitable solution to fix it, please visit this page frequently (or if the plugin crashes) for the latest updates.</strong>
 
-plugin.video.990 v0.4.13 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.14.zip)
+plugin.video.990 v0.4.14 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.14.zip)
 
 plugin.video.cinemaxx v1.0.10 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.10.zip)
 
