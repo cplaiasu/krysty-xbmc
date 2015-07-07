@@ -1,7 +1,7 @@
 """
     990.ro XBMC Addon
-    Copyright (C) 2012-2014 krysty
-	https://code.google.com/p/krysty-xbmc/
+    Copyright (C) 2012-2015 krysty
+	https://github.com/yokrysty/krysty-xbmc
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

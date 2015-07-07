@@ -12,7 +12,7 @@
     <extension point="xbmc.addon.metadata">
 		<provides>video</provides>
         <platform>all</platform>
-		<website>https://code.google.com/p/krysty-xbmc/</website>
+		<website>https://github.com/yokrysty/krysty-xbmc</website>
         <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007</license>
         <summary>Stream videos from www.990.ro</summary>
         <description>Stream scene releases from the links listed on [COLOR blue]www.990.ro[/COLOR]</description>
