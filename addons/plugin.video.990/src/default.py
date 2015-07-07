@@ -300,7 +300,8 @@ def getMovies(url):
 	current = 0
 	
 	while current <= total - 1:
-		name = "%s (%s)" % (htmlFilter(links[current].text), years[current])
+		year = years[0] if years else "unknown"
+		name = "%s (%s)" % (htmlFilter(links[current].text), year)
 		link = urlFilter(links[current]['href'])
 		thumbnail = siteUrl + thumbs[current]
 		
