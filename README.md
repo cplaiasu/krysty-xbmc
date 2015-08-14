@@ -10,7 +10,7 @@ plugin.video.cinemaxx v1.0.10 [download here](https://github.com/yokrysty/krysty
 <br /><br /><br />
 Notes:
 
-- all plugins successfully tested on XBMC 12.3 Frodo, XBMC 13.2 Gotham, KODI 14.2 Helix
+- all plugins successfully tested on XBMC 12.3 Frodo, XBMC 13.2 Gotham, Kodi 14.2 Helix, Kodi 15.0 Isengard
 
 - for better performance right click [here](https://github.com/yokrysty/krysty-xbmc/raw/master/settings/advancedsettings.xml), click 'Save link as' (Google Chrome) or 'Save Linked Content As' (Opera), save the file to 'C:/Users/YOUR USERNAME/AppData/Roaming/KODI(or XBMC)/userdata'
 
