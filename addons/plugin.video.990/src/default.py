@@ -1,20 +1,20 @@
 """
-    990.ro XBMC Addon
-    Copyright (C) 2012-2015 krysty
+	990.ro XBMC Addon
+	Copyright (C) 2012-2015 krysty
 	https://github.com/yokrysty/krysty-xbmc
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys, os, re
@@ -112,7 +112,7 @@ def getSeasons(tvshow, url):
 	
 	seasons = re.findall(r"<img src='.+?' alt='Sezonul (.+?)'>", http_req(url))
 	thumb = re.findall(r"<img src='../(.+?)'", http_req(url))
-	if thumb: thumbnail = siteUrl + thumb[0]
+	if thumb: thumbnail = urlFilter(thumb[0])
 	else: thumbnail = ''
 
 	total = len(seasons)
@@ -156,29 +156,26 @@ def getEpisodes(url,season,title,thumbnail):
 	if not cache:		
 		div = htmlFilter(str(BeautifulSoup(http_req(url)).find("div", {"id": "content"})), True)
 		
-		episodes = re.findall(r'Sezonul '+season+', Episodul (.+?)</div>.+?<a href="seriale2-([\d]+-[\d]+)-.+?.html" class="link">(.+?)</a>', div)
-
+		episodes = re.findall(r'Sezonul '+season+', Episodul (.+?)</div>.+?<a href="(seriale.+?html?)" class="link">(.+?)</a>', div)
+		
 		if episodes:
 			total = len(episodes)
 		else:
-			episodes = re.findall(r'ma;">([\d]+)</div>.+?<a href="seriale2-([0-9]+-[0-9]+)-.+?.html" class="link">(.+?)</a>', div)
+			episodes = re.findall(r'ma;">([\d]+)</div>.+?<a href="(seriale.+?html?)" class="link">(.+?)</a>', div)
 			total = len(episodes)
 
 		current = 0
 
 		while current <= total - 1:
-			
-			ep_num = episodes[current][0]
 			ep_name = episodes[current][2]
-			
 			if ep_name == str(re.findall('(Episodul [-0-9]*)',ep_name)).strip('[]').strip('"\''): ep_name = ''
 			
 			tvshow = {}
-			tvshow['url'] = siteUrl + 'player-serial-' + episodes[current][1] + '-sfast.html'
+			tvshow['url'] = urlFilter(episodes[current][1])
 			tvshow['thumbnail'] = thumbnail
 			tvshow['title'] = title
 			tvshow['season'] = season
-			tvshow['ep_num'] = ep_num
+			tvshow['ep_num'] = episodes[current][0]
 			tvshow['ep_name'] = ep_name
 			list.append(tvshow)
 			
@@ -192,9 +189,9 @@ def getEpisodes(url,season,title,thumbnail):
 			
 		if plugin.getSetting("enableCache") == 'true':
 			plugin.cacheList(list, cacheFilename)
-
+	
 	for tvshow in list:
-		name = 'Episode %s %s' % (tvshow['ep_num'], tvshow['ep_name'])
+		name = '%sx%s %s' % (season, tvshow['ep_num'], tvshow['ep_name'])
 		
 		addDir(name,tvshow['url'],8,tvshow['thumbnail'],tvshow['title'],tvshow['season'],tvshow['ep_num'],tvshow['ep_name'],folder=False)
 		
@@ -211,9 +208,9 @@ def lastAdded(cat):
 	div = htmlFilter(str(BeautifulSoup(http_req(siteUrl)).findAll("div", {"id": "tab1"})), True)
 	
 	if cat == 'tvshows':
-		results = re.findall(r'<a class="link" href="(seriale2)-([0-9]+-[0-9]+)-.+?.html">(.+?)</a>.+?">(.+?)</div></div>', div)
+		results = re.findall(r'<a class="link" href="(seriale2)(.+?html?)">(.+?)</a>.+?">(.+?)</div></div>', div)
 	elif cat == 'movies':
-		results = re.findall(r'<a class="link" href="(filme)-(.+?).html">(.+?)</a>.+?">(.+?)</div>', div)
+		results = re.findall(r'<a class="link" href="(filme)(.+?html?)">(.+?)</a>.+?">(.+?)</div>', div)
 	
 	total = len(results)
 	current = 0
@@ -221,9 +218,10 @@ def lastAdded(cat):
 	while current <= total-1:
 		
 		type = results[current][0]
-		link = results[current][1]
+		link = type + results[current][1]
 		title = results[current][2]
 		ep_year = results[current][3]
+		url = urlFilter(link)
 		
 		if type == 'seriale2':
 			eps = re.findall(r'S(\d+)E(\d+)', ep_year)
@@ -235,7 +233,6 @@ def lastAdded(cat):
 				episode = ''
 			
 			name = '%s %sx%s' % (title, season, episode)
-			url = siteUrl + 'player-serial-' + link + '-sfast.html'
 			
 			addDir(name,url,8,"",title,season,episode,folder=False)
 		
@@ -243,7 +240,6 @@ def lastAdded(cat):
 			year = re.findall('(\d{4,4})', ep_year)
 			year = year[0] if year else "unknown"
 			name = '%s (%s)' % (title, year)
-			url = siteUrl + 'filme-' + link + '.html'
 			
 			addDir(name,url,8,"",name,folder=False)
 
@@ -303,7 +299,7 @@ def getMovies(url):
 		year = years[0] if years else "unknown"
 		name = "%s (%s)" % (htmlFilter(links[current].text), year)
 		link = urlFilter(links[current]['href'])
-		thumbnail = siteUrl + thumbs[current]
+		thumbnail = urlFilter(thumbs[current])
 		
 		addDir(name, link, 8, thumbnail, name, folder=False)
 		
@@ -312,7 +308,7 @@ def getMovies(url):
 		percent = int(((current + 1) * 100) / total)
 		message = "Loading list - " + str(percent) + "%"
 		progress.update(percent, "", message, "")
-				
+		
 		current += 1
 	
 	if not page == pages:
@@ -370,7 +366,7 @@ def SEARCH(cat):
 			if results[current][0] == 'seriale':
 				name = re.sub('\(', ' (', results[current][2])
 				url = '%sseriale-%s-online-download.html' % (siteUrl, results[current][1])
-				thumbnail = siteUrl + thumb[current]
+				thumbnail = urlFilter(thumb[current])
 				title = re.sub('\(.+?\)', '', name).strip()
 				
 				addDir(name,url,2,thumbnail,title)
@@ -378,7 +374,7 @@ def SEARCH(cat):
 			elif results[current][0] == 'filme':
 				title = re.sub('\(', ' (', results[current][2])
 				url = '%sfilme-%s-online-download.html' % (siteUrl, results[current][1])
-				thumbnail = siteUrl + thumb[current]
+				thumbnail = urlFilter(thumb[current])
 				
 				addDir(title,url,8,thumbnail,title,folder=False)
 			
@@ -496,24 +492,27 @@ def selectSource(url,title='',thumbnail='',season='',episode='',ep_name=''):
 def getSources(url):
 	sources = []
 	try:
+		html = http_req(url)
+
 		quality = ''
 		if(re.search('filme', url)):
-			quality = re.search(r'Calitate film: nota <b>(.+?)</b>', http_req(url))
-			movieId = re.search('-([\d]+)-', url)
-			url = siteUrl + 'player-film-' + movieId.group(1) + '-sfast.html'
+			quality = re.search(r'Calitate film: nota <b>(.+?)</b>', html)
+
+		match = re.search(r"<a class='link' href='(player.+?sfast.+?html?)'", html)
+		url = urlFilter(match.group(1))
 
 		match = re.search(r'http://(?:www.)?(?:fastupload|superweb)(?:.rol)?.ro/?(?:video)?/(?:.+?).html?', http_req(url))
 		url = match.group(0)
 		match = re.search(r"'file': '(.+?)',", http_req(url))
 		videoLink = match.group(1) + '|referer=' + url
-		
+
 		if(quality == ''):
 			item = {'name': 'Play Video', 'url': videoLink, 'subtitle': getSubtitle(url)}
 		else:
 			item = {'name': 'Play Video (Quality:'+quality.group(1)+')', 'url': videoLink, 'subtitle': getSubtitle(url)}
-		
+
 		sources.append(item)
-		
+
 		return sources
 	except:
 		return False

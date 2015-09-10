@@ -1,3 +1,6 @@
+0.4.15
+-> fixed: video links not available
+
 0.4.14
 -> fixed: last added section for movies, issue reported by fanelaru
 -> fixed: YouTube trailers, issue reported by fanelaru
