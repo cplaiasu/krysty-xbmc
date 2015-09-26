@@ -25,15 +25,13 @@ import json
 import plugin, db
 from resources.lib.ga import track
 
-PLUGIN_PATH = plugin.getPluginPath()
-
 URL = {}
-URL['base']			= 'http://www.cinemaxx.ro/'
-URL['search']		= 'http://www.cinemaxx.ro/search.php?keywords='
-URL['newMovies']	= 'http://www.cinemaxx.ro/newvideos.html'
+URL['base']			= 'http://www.cinemaxx.rs/'
+URL['search']		= 'http://www.cinemaxx.rs/search.php?keywords='
+URL['newMovies']	= 'http://www.cinemaxx.rs/newvideos.html'
 
 HEADERS = {
-	'User-Agent': 	 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
+	'User-Agent': 	 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36',
 	'Accept': 		 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 	'Cache-Control': 'no-transform'
 }
@@ -44,10 +42,15 @@ ICON = {
 	'settings': 'settingsicon.png'
 }
 
+PLUGIN_PATH = plugin.getPluginPath()
+
 for k, v in ICON.iteritems():
 	ICON[k] = os.path.join(PLUGIN_PATH, 'resources', 'media', v)
+
 print plugin.getPluginVersion()
+
 DB = db.DB()
+
 track(plugin.getPluginVersion())
 
 

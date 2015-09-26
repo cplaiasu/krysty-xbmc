@@ -4,14 +4,14 @@
 
 plugin.video.990 v0.4.15 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.15.zip)
 
-plugin.video.cinemaxx v1.0.10 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.10.zip)
+plugin.video.cinemaxx v1.0.11 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.11.zip)
 
 990.ro and cinemaxx.ro does not host videofiles, merely providing links to other sites.
 <br /><br /><br />
 Notes:
 
 - all plugins successfully tested on<br />
-XBMC 12.3 Frodo, XBMC 13.2 Gotham, Kodi 14.2 Helix, Kodi 15.0 Isengard
+XBMC 12.3 Frodo, XBMC 13.2 Gotham, Kodi 14.2 Helix, Kodi 15.1 Isengard
 
 - for better performance right click [here](https://github.com/yokrysty/krysty-xbmc/raw/master/settings/advancedsettings.xml), click 'Save link as' (Google Chrome) or 'Save Linked Content As' (Opera), save the file to 'C:/Users/YOUR USERNAME/AppData/Roaming/KODI(or XBMC)/userdata'
 
