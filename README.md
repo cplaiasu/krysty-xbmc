@@ -2,7 +2,7 @@
 
 <strong>If you like this project please </strong>[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X9559SH2MKQ7S)
 <br /><br />
-plugin.video.990 v0.4.15 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.15.zip)
+plugin.video.990 v0.4.16 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.990/plugin.video.990-0.4.16.zip)
 
 plugin.video.cinemaxx v1.0.11 [download here](https://github.com/yokrysty/krysty-xbmc/raw/master/addons/plugin.video.cinemaxx/plugin.video.cinemaxx-1.0.11.zip)
 

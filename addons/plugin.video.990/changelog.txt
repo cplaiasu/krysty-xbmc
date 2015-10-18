@@ -1,3 +1,6 @@
+0.4.16
+-> fixed: subtitle problem
+
 0.4.15
 -> fixed: video links not available
 

@@ -497,19 +497,31 @@ def getSources(url):
 		quality = ''
 		if(re.search('filme', url)):
 			quality = re.search(r'Calitate film: nota <b>(.+?)</b>', html)
-
+		
 		match = re.search(r"<a class='link' href='(player.+?sfast.+?html?)'", html)
+		
 		url = urlFilter(match.group(1))
-
-		match = re.search(r'http://(?:www.)?(?:fastupload|superweb)(?:.rol)?.ro/?(?:video)?/(?:.+?).html?', http_req(url))
-		url = match.group(0)
-		match = re.search(r"'file': '(.+?)',", http_req(url))
+		html = http_req(url)
+		
+		playerdiv = re.search(r"<div class='player.+?</div>", html, re.DOTALL).group(0)
+		a = re.search(r"<a href='(http:\/\/(?:www\.)?.+?)'>", playerdiv).group(1)
+		
+		url = a[a.rfind('http'):]
+		html = http_req(url)
+		
+		match = re.search(r"'file'\s*:\s*'(.+?)',", html)
 		videoLink = match.group(1) + '|referer=' + url
+		
+		subtitle = ''
+		if plugin.getSetting("enableSub") == 'true':
+			match = re.search(r"'captions\.file'\s*:\s*'(.+?)',", html)
+			if match:
+				subtitle = saveSubtitle(match.group(1))
 
 		if(quality == ''):
-			item = {'name': 'Play Video', 'url': videoLink, 'subtitle': getSubtitle(url)}
+			item = {'name': 'Play Video', 'url': videoLink, 'subtitle': subtitle}
 		else:
-			item = {'name': 'Play Video (Quality:'+quality.group(1)+')', 'url': videoLink, 'subtitle': getSubtitle(url)}
+			item = {'name': 'Play Video (Quality:'+quality.group(1)+')', 'url': videoLink, 'subtitle': subtitle}
 
 		sources.append(item)
 
@@ -518,21 +530,18 @@ def getSources(url):
 		return False
 
 
-def getSubtitle(url):
-	subtitle = ''
+def saveSubtitle(url):
 	try:
-		if plugin.getSetting("enableSub") == 'true':
-			page = str(BeautifulSoup(http_req(url)).findAll("script"))
-			page = ''.join(page.split())
-			match = re.findall('\'tracks\':\[{\'file\':"http:\/\/superweb\.rol\.ro\/video\/jw6\/(.+?)",', page)
-			if match:
-				sub_url = 'http://superweb.rol.ro/video/jw6/' + match[0]
-				sub_tmp = os.path.join(xbmc.translatePath("special://temp"), match[0])
-				with open(sub_tmp, 'w') as f:
-					f.write(http_req(sub_url))
-				subtitle = match[0]
-	except: pass
-	return subtitle
+		filename = url.split('/')[-1]
+		filepath = os.path.join(xbmc.translatePath("special://temp"), filename)
+		if os.path.exists(filepath):
+			os.remove(filepath)
+		with open(filepath, 'w') as f:
+			f.write(http_req(url))
+		return filepath
+	except:
+		pass
+	return ''
 
 
 def addDir(name,url,mode,thumbnail='',title='',season='',episode='',episode_name='',folder=True):
