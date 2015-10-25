@@ -208,7 +208,7 @@ def lastAdded(cat):
 	div = htmlFilter(str(BeautifulSoup(http_req(siteUrl)).findAll("div", {"id": "tab1"})), True)
 	
 	if cat == 'tvshows':
-		results = re.findall(r'<a class="link" href="(seriale2)(.+?html?)">(.+?)</a>.+?">(.+?)</div></div>', div)
+		results = re.findall(r'<a data-id="\d+" class="link link2" href="(seriale2)(.+?html?)">(.+?)</a>.+?">(.+?)</div></div>', div)
 	elif cat == 'movies':
 		results = re.findall(r'<a class="link" href="(filme)(.+?html?)">(.+?)</a>.+?">(.+?)</div>', div)
 	
